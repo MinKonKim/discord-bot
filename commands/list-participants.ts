@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js'
-import { CustomClient } from '..'
+import { GuildSession } from '../sessionData'
 import { getPlayerNicknameById } from '../utils/discord-utils'
 
 // commands/list-participants.js
@@ -10,12 +10,13 @@ module.exports = {
     .setName('참여인원')
     .setDescription('현재 팀 빌딩에 참여한 인원 목록을 보여줍니다.'),
 
-  async execute(interaction: ChatInputCommandInteraction, client: CustomClient) {
-    const joinedPlayers = client.joinedPlayers
+  async execute(interaction: ChatInputCommandInteraction, guildSession: GuildSession) {
+    const joinedPlayers = guildSession.joinedPlayers
 
     if (!interaction.guild) {
       return interaction.reply({
-        content: '',
+        content: '❌ 이 명령어는 서버에서만 사용할 수 있습니다.',
+        ephemeral: true,
       })
     }
 
@@ -27,19 +28,13 @@ module.exports = {
 
     let playerList = '## 참여자 명단\n'
 
-    for (const userId of joinedPlayers) {
-      const user = await client.users.fetch(userId)
-      const nickname = await getPlayerNicknameById(client, interaction.guild?.id!, userId)
-      //       if (player) {
-      //         playerList += `- ${username} (탱: ${player.tankTier || '미입력'} / 딜: ${
-      //           player.dpsTier || '미입력'
-      //         } / 힐: ${player.healTier || '미입력'})
-      // `
-      //       } else {
-      //         // This case should ideally not happen if logic is consistent
-      //         playerList += `- ${username} (정보 없음)
-      // `
-      //       }
+    for (const userId of joinedPlayers.keys()) {
+      const nickname = await getPlayerNicknameById(interaction, userId)
+      if (nickname) {
+        playerList += `- ${nickname} 참여\n`
+      } else {
+        playerList += `- <@${userId}> (정보 없음)\n`
+      }
     }
 
     await interaction.reply(playerList)

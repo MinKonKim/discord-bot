@@ -1,12 +1,13 @@
-// commands/모킹.js
-const { SlashCommandBuilder } = require('discord.js')
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js'
+import { GuildSession } from '../sessionData'
+import { getRandomTier } from '../utils/string-utils'
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('모킹')
     .setDescription('테스트용 가짜 유저 정보 입력')
-    .addIntegerOption(opt =>
-      opt
+    .addIntegerOption(option =>
+      option
         .setName('수')
         .setDescription('생성할 유저 수 (최대 12)')
         .setMinValue(1)
@@ -14,8 +15,8 @@ module.exports = {
         .setRequired(true)
     ),
 
-  async execute(interaction, client) {
-    const count = interaction.options.getInteger('수')
+  async execute(interaction: ChatInputCommandInteraction, guildSession: GuildSession) {
+    const count = interaction.options.getInteger('수') || 1
 
     const roles = ['탱', '딜', '힐']
     const tiers = [
@@ -34,11 +35,11 @@ module.exports = {
       const role = roles[Math.floor(Math.random() * roles.length)]
       const tier = tiers[Math.floor(Math.random() * tiers.length)]
 
-      client.playerData.set(id, {
-        id,
-        username: `테스트유저${i}`,
-        role,
-        tier,
+      guildSession.joinedPlayers.set(id, {
+        nickname: `유저${i}`,
+        dpsTier: getRandomTier(),
+        healTier: getRandomTier(),
+        tankTier: getRandomTier(),
       })
     }
 

@@ -1,10 +1,9 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js'
-import { userService } from '../services/user-service'
-import { OverwatchTier } from '../sessionData'
 import { OverWatchPlayer } from '@prisma/client'
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from 'discord.js'
+import { userService } from '../services/user-service'
+import { GuildSession, OverwatchTier } from '../sessionData'
 import { getPlayerNicknameById } from '../utils/discord-utils'
 import { toPrismaTier } from '../utils/string-utils'
-import { CustomClient } from '..'
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,8 +28,8 @@ module.exports = {
         .addChoices(...Object.keys(OverwatchTier).map(tier => ({ name: tier, value: tier })))
     ),
 
-  async execute(interaction: ChatInputCommandInteraction, client: CustomClient) {
-    if (!client.collecting) {
+  async execute(interaction: ChatInputCommandInteraction, guildSession: GuildSession) {
+    if (!guildSession.collecting) {
       return interaction.reply({
         content: '❌ `/시작` 명령어로 먼저 수집을 시작해주세요.',
         ephemeral: true,
@@ -45,9 +44,7 @@ module.exports = {
     }
 
     const userId = interaction.user.id
-    const nickname =
-      (await getPlayerNicknameById(client, interaction.guild.id, interaction.user.id)) ||
-      interaction.user.username
+    const nickname = await getPlayerNicknameById(interaction, userId)
     const position = interaction.options.getString('포지션', true)
     const tierString = interaction.options.getString('티어', true)
     const tier = toPrismaTier(tierString)
@@ -74,16 +71,16 @@ module.exports = {
       if (position === '힐') playerData.healTier = tier
 
       await userService.upsertPlayer(playerData)
-      client.joinedPlayers.add(userId)
-
-      await interaction.reply(
-        `✅ ${nickname}님의 ${position} 포지션 티어가 **${tierString}**(으)로 저장되었습니다.`
-      )
+      guildSession.joinedPlayers.set(userId, playerData)
+      await interaction.reply({
+        content: `✅ ${nickname}님의 ${position} 포지션 티어가 **${tierString}**(으)로 저장되었습니다.`,
+        flags: MessageFlags.Ephemeral,
+      })
     } catch (error) {
       console.error(error)
       await interaction.reply({
         content: '❌ 정보를 저장하는 동안 오류가 발생했습니다.',
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       })
     }
   },

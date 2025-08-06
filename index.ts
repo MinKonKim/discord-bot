@@ -1,13 +1,22 @@
-import { Client, Collection, GatewayIntentBits, Events } from 'discord.js'
+import { Client, Collection, Events, GatewayIntentBits } from 'discord.js'
+import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import 'dotenv/config'
+import { GuildSession, OverWathPlayerDump } from './sessionData'
 
 // 타입 안전성을 위한 CustomClient 클래스 정의
 export class CustomClient extends Client {
   commands = new Collection<string, any>()
-  collecting = false
-  joinedPlayers = new Set<string>()
+  guildSessions = new Collection<string, GuildSession>() // guildId -> session
+  getGuildSession(guildId: string): GuildSession {
+    if (!this.guildSessions.has(guildId)) {
+      this.guildSessions.set(guildId, {
+        collecting: false,
+        joinedPlayers: new Collection<string, OverWathPlayerDump | null>(),
+      })
+    }
+    return this.guildSessions.get(guildId)!
+  }
 }
 
 const client = new CustomClient({
