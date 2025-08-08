@@ -1,7 +1,7 @@
 import { Tier } from '@prisma/client'
 import fs from 'node:fs'
 import path from 'node:path'
-import { PlayerWithRole } from '../sessionData'
+import { Player } from './build-teams'
 
 const imageMap: Record<string, string> = {
   브론즈: 'overwatch_bronze.png',
@@ -60,8 +60,33 @@ export const getRandomTier = (): Tier => {
   return values[Math.floor(Math.random() * values.length)]
 }
 
-export const formatPlayer = (p: PlayerWithRole) => {
-  const tier =
-    p.assignedRole === 'tank' ? p.tankTier : p.assignedRole === 'dps' ? p.dpsTier : p.healTier
-  return `${p.nickname} (${p.assignedRole.toUpperCase()} - ${tier})`
+export const getRoleImage = (role: 'tank' | 'dps' | 'heal' | null): string => {
+  switch (role) {
+    case 'tank':
+      return '🛡️' // 실제 이미지 URL로 변경
+    case 'dps':
+      return '🔫' // 실제 이미지 URL로 변경
+    case 'heal':
+      return '💀' // 실제 이미지 URL로 변경
+    default:
+      return ''
+  }
 }
+
+export const getTireImageByScore = (score: number): string => {
+  if (score <= 1) return '<:overwatch_bronze:1403311989459255397>'
+  if (score <= 2) return '<:overwatch_silver:1403312009096724553>'
+  if (score <= 3) return '<:overwatch_gold:1403311998212771940>'
+  if (score <= 4) return '<:overwatch_platinum:1403312007297372183>'
+  if (score <= 5) return '<:overwatch_diamond:1403311996090187786>'
+  if (score <= 6) return '<:overwatch_master:1403312004374200391>'
+  if (score <= 7) return '<:overwatch_grandmaster:1403312001253638205>'
+  return '<:overwatch_champion:1403311993087197334>'
+}
+// 팀원 문자열 생성 함수
+export const formatPlayers = (players: Player[]) =>
+  players
+    .map(
+      p => `• **${p.nickname}** \t(${getRoleImage(p.assignedRole)})-${getTireImageByScore(p.score)}`
+    )
+    .join('\n')

@@ -3,7 +3,7 @@ import { Client, Events, GatewayIntentBits } from 'discord.js'
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import { GuildSession, OverWathPlayerDump } from './sessionData'
+import { GuildSession, OverWatchPlayerDump } from './sessionData'
 
 // 타입 안전성을 위한 CustomClient 클래스 정의
 export class CustomClient extends Client {
@@ -13,7 +13,7 @@ export class CustomClient extends Client {
     if (!this.guildSessions.has(guildId)) {
       this.guildSessions.set(guildId, {
         collecting: false,
-        joinedPlayers: new Collection<string, OverWathPlayerDump>(),
+        joinedPlayers: new Collection<string, OverWatchPlayerDump>(),
       })
     }
     return this.guildSessions.get(guildId)!

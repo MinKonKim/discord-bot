@@ -25,11 +25,11 @@ export interface OverWatchPlayerClient extends Client {
   collecting: boolean
 }
 
-export type OverWathPlayerDump = Omit<OverWatchPlayer, 'id' | 'createdAt'>
+export type OverWatchPlayerDump = Omit<OverWatchPlayer, 'id' | 'createdAt'>
 
 export interface GuildSession {
   collecting: boolean
-  joinedPlayers: Collection<string, OverWathPlayerDump>
+  joinedPlayers: Collection<string, OverWatchPlayerDump>
   // 추후 팀 정보, 매칭 상태 등 추가 가능
 }
 
