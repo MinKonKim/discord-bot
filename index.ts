@@ -46,11 +46,36 @@ for (const file of commandFiles) {
   }
 }
 
+const tierChoices = [
+  '브론즈',
+  '실버',
+  '골드',
+  '플래티넘',
+  '다이아몬드',
+  '마스터',
+  '그랜드마스터',
+  '챔피언',
+]
+
 client.once(Events.ClientReady, c => {
   console.log(`✅ Logged in as ${c.user.tag}`)
 })
 
 client.on(Events.InteractionCreate, async interaction => {
+  if (interaction.isAutocomplete()) {
+    if (interaction.commandName === '입력') {
+      const focused = interaction.options.getFocused().toString().toLowerCase()
+
+      const filteredChoices = tierChoices
+        .filter(tier => tier.toLowerCase().startsWith(focused))
+        .slice(0, 25)
+        .map(tier => ({ name: tier, value: tier }))
+
+      await interaction.respond(filteredChoices)
+    }
+    return
+  }
+
   if (!interaction.isChatInputCommand()) return
 
   const command = client.commands.get(interaction.commandName)
