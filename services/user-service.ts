@@ -1,6 +1,6 @@
-import { PrismaClient, OverWatchPlayer } from '@prisma/client';
+import { OverWatchPlayer, PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 export const userService = {
   async upsertPlayer(
@@ -10,14 +10,14 @@ export const userService = {
       where: { nickname: playerData.nickname },
       update: playerData,
       create: playerData,
-    });
+    })
   },
 
   async getPlayerById(id: string): Promise<OverWatchPlayer | null> {
-    return prisma.overWatchPlayer.findUnique({ where: { id } });
+    return prisma.overWatchPlayer.findUnique({ where: { id } })
   },
 
   async getPlayerByNickname(nickname: string): Promise<OverWatchPlayer | null> {
-    return prisma.overWatchPlayer.findUnique({ where: { nickname } });
+    return prisma.overWatchPlayer.findUnique({ where: { nickname } })
   },
-};
+}

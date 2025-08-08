@@ -1,6 +1,5 @@
-import { ChatInputCommandInteraction } from 'discord.js'
+import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js'
 import { GuildSession } from '../sessionData'
-import { getPlayerNicknameById } from '../utils/discord-utils'
 
 // commands/list-participants.js
 const { SlashCommandBuilder } = require('discord.js')
@@ -26,17 +25,22 @@ module.exports = {
       })
     }
 
-    let playerList = '## 참여자 명단\n'
+    const playerList = Array.from(joinedPlayers.values())
+      .map(player => {
+        const positions = []
+        if (player.tankTier) positions.push(`🛡️탱커: ${player.tankTier}`)
+        if (player.dpsTier) positions.push(`⚔️딜러: ${player.dpsTier}`)
+        if (player.healTier) positions.push(`🧑‍⚕️힐러: ${player.healTier}`)
+        return `- ${player.nickname} \t (${positions.join(', ')})`
+      })
+      .join('\n')
 
-    for (const userId of joinedPlayers.keys()) {
-      const nickname = await getPlayerNicknameById(interaction, userId)
-      if (nickname) {
-        playerList += `- ${nickname} 참여\n`
-      } else {
-        playerList += `- <@${userId}> (정보 없음)\n`
-      }
-    }
+    const embed = new EmbedBuilder()
+      .setColor(0x0099ff)
+      .setTitle('참여자 명단')
+      .setDescription(playerList || '참가자 없음')
+      .setTimestamp()
 
-    await interaction.reply(playerList)
+    await interaction.reply({ embeds: [embed] })
   },
 }

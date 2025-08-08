@@ -1,5 +1,6 @@
+import { Collection } from '@discordjs/collection'
 import { OverWatchPlayer } from '@prisma/client'
-import { Client, Collection } from 'discord.js'
+import { Client } from 'discord.js'
 
 export enum OverwatchTier {
   브론즈 = 1,
@@ -28,6 +29,18 @@ export type OverWathPlayerDump = Omit<OverWatchPlayer, 'id' | 'createdAt'>
 
 export interface GuildSession {
   collecting: boolean
-  joinedPlayers: Collection<string, OverWathPlayerDump | null>
+  joinedPlayers: Collection<string, OverWathPlayerDump>
   // 추후 팀 정보, 매칭 상태 등 추가 가능
+}
+
+export type Role = 'tank' | 'dps' | 'heal'
+export interface PlayerWithRole extends OverWatchPlayer {
+  assignedRole: Role
+  score: number
+}
+
+export interface Team {
+  players: PlayerWithRole[]
+  totalScore: number
+  avgScore: number
 }

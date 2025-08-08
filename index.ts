@@ -1,4 +1,5 @@
-import { Client, Collection, Events, GatewayIntentBits } from 'discord.js'
+import { Collection } from '@discordjs/collection'
+import { Client, Events, GatewayIntentBits } from 'discord.js'
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -12,7 +13,7 @@ export class CustomClient extends Client {
     if (!this.guildSessions.has(guildId)) {
       this.guildSessions.set(guildId, {
         collecting: false,
-        joinedPlayers: new Collection<string, OverWathPlayerDump | null>(),
+        joinedPlayers: new Collection<string, OverWathPlayerDump>(),
       })
     }
     return this.guildSessions.get(guildId)!
@@ -59,7 +60,8 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   try {
-    await command.execute(interaction, client)
+    const guildSession = client.getGuildSession(interaction.guildId!) // 길드 세션
+    await command.execute(interaction, guildSession)
   } catch (error) {
     console.error(error)
     if (interaction.replied || interaction.deferred) {

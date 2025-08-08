@@ -18,22 +18,8 @@ module.exports = {
   async execute(interaction: ChatInputCommandInteraction, guildSession: GuildSession) {
     const count = interaction.options.getInteger('수') || 1
 
-    const roles = ['탱', '딜', '힐']
-    const tiers = [
-      '브론즈',
-      '실버',
-      '골드',
-      '플래티넘',
-      '다이아몬드',
-      '마스터',
-      '그랜드마스터',
-      '챔피언',
-    ]
-
     for (let i = 1; i <= count; i++) {
-      const id = `mock-${i}`
-      const role = roles[Math.floor(Math.random() * roles.length)]
-      const tier = tiers[Math.floor(Math.random() * tiers.length)]
+      const id = i.toString()
 
       guildSession.joinedPlayers.set(id, {
         nickname: `유저${i}`,
