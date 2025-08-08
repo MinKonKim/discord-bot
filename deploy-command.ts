@@ -6,6 +6,7 @@ const path = require('node:path')
 const token = process.env.DISCORD_TOKEN
 const clientId = process.env.CLIENT_ID
 const guildId = process.env.GUILD_ID
+const isGlobal = process.env.GLOBAL_DEPLOY === 'true'
 
 const commands = []
 const commandsPath = path.join(__dirname, 'commands')
@@ -25,11 +26,15 @@ const rest = new REST().setToken(token)
 
 ;(async () => {
   try {
-    console.log(`🎯 [등록 시작] ${commands.length}개 명령어를 Discord에 등록합니다.`)
-
-    await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-
-    console.log('✅ 성공적으로 등록 완료!')
+    if (isGlobal) {
+      console.log('⚙️ 전역 명령어 등록 중...')
+      await rest.put(Routes.applicationCommands(clientId), { body: commands })
+      console.log('✅ 전역 명령어 등록 완료!')
+    } else {
+      console.log(`⚙️ 길드 명령어 등록 중... (길드 ID: ${guildId})`)
+      await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
+      console.log('✅ 길드 명령어 등록 완료!')
+    }
   } catch (error) {
     console.error(error)
   }
