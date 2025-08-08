@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js'
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from 'discord.js'
 import { GuildSession } from '../sessionData'
 import { getRandomTier } from '../utils/string-utils'
 
@@ -31,7 +31,7 @@ module.exports = {
 
     await interaction.reply({
       content: `${count}명의 테스트 유저가 생성되었습니다.`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     })
   },
 }

@@ -1,7 +1,6 @@
-import { OverWatchPlayer } from '@prisma/client'
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from 'discord.js'
 import { userService } from '../services/user-service'
-import { GuildSession, OverwatchTier } from '../sessionData'
+import { GuildSession, OverWatchPlayerDump } from '../sessionData'
 import { getPlayerNicknameById } from '../utils/discord-utils'
 import { toPrismaTier } from '../utils/string-utils'
 
@@ -25,7 +24,7 @@ module.exports = {
         .setName('티어')
         .setDescription('브론즈 ~ 챔피언 중 하나')
         .setRequired(true)
-        .addChoices(...Object.keys(OverwatchTier).map(tier => ({ name: tier, value: tier })))
+        .setAutocomplete(true)
     ),
 
   async execute(interaction: ChatInputCommandInteraction, guildSession: GuildSession) {
@@ -59,7 +58,7 @@ module.exports = {
     try {
       const existingPlayer = await userService.getPlayerByNickname(nickname)
 
-      const playerData: Omit<OverWatchPlayer, 'id' | 'createdAt'> = {
+      const playerData: OverWatchPlayerDump = {
         nickname,
         tankTier: existingPlayer?.tankTier || null,
         dpsTier: existingPlayer?.dpsTier || null,

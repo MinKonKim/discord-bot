@@ -1,8 +1,10 @@
-import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js'
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  MessageFlags,
+  SlashCommandBuilder,
+} from 'discord.js'
 import { GuildSession } from '../sessionData'
-
-// commands/list-participants.js
-const { SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,7 +17,7 @@ module.exports = {
     if (!interaction.guild) {
       return interaction.reply({
         content: '❌ 이 명령어는 서버에서만 사용할 수 있습니다.',
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       })
     }
 

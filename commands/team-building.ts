@@ -1,7 +1,10 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { ChatInputCommandInteraction } from 'discord.js'
 import { GuildSession } from '../sessionData'
-import { buildTeams } from '../utils/build-teams'
-import { formatPlayers } from '../utils/string-utils'
+
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const { GuildSession } = require('../sessionData')
+const { buildTeams } = require('../utils/build-teams')
+const { formatPlayers } = require('../utils/string-utils')
 
 // commands/팀빌딩.js
 
@@ -15,7 +18,7 @@ module.exports = {
 
     const result = buildTeams(joinedPlayers)
 
-    if ('error' in result!) {
+    if ('error' in result) {
       await interaction.reply({
         embeds: [
           new EmbedBuilder()
@@ -49,3 +52,5 @@ module.exports = {
     await interaction.reply({ embeds: [embed] })
   },
 }
+
+export {}
