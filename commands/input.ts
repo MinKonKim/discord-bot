@@ -7,7 +7,7 @@ import { toPrismaTier } from '../utils/string-utils'
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('입력')
-    .setDescription('자신의 포지션과 티어를 입력합니다.')
+    .setDescription('자신의 포지션과 티어를 입력합니다. 입력은 여러번 가능합니다!😀')
     .addStringOption(option =>
       option
         .setName('포지션')

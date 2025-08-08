@@ -4,6 +4,7 @@ import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
 import { GuildSession, OverWatchPlayerDump } from './sessionData'
+import { logger } from './utils/logger'
 
 // 타입 안전성을 위한 CustomClient 클래스 정의
 export class CustomClient extends Client {
@@ -59,6 +60,14 @@ const tierChoices = [
 
 client.once(Events.ClientReady, c => {
   console.log(`✅ Logged in as ${c.user.tag}`)
+})
+
+client.on(Events.ClientReady, () => {
+  logger.info(`Discord 봇이 준비되었습니다. 사용자: ${client.user?.tag}`)
+})
+
+client.on(Events.Error, error => {
+  logger.error('Discord 클라이언트 오류 발생', error)
 })
 
 client.on(Events.InteractionCreate, async interaction => {
